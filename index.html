@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KisanAI – AI Farmer Advisory & Support System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────── */
+:root{
+  --earth:#1C1208;
+  --bark:#3B2007;
+  --soil:#5C3310;
+  --clay:#8B5E3C;
+  --field:#2D5016;
+  --leaf:#3E7B1F;
+  --sprout:#5FAD2F;
+  --mint:#A8D87A;
+  --sky:#EAF4D6;
+  --cream:#F8F4ED;
+  --fog:#EDE8DE;
+  --parchment:#F2EDE3;
+  --sun:#E8960D;
+  --amber:#FFC547;
+  --rust:#C44B1B;
+  --white:#FFFFFF;
+  --text:#1C1208;
+  --muted:#7A6A55;
+  --border:#DDD5C4;
+  --shadow:rgba(28,18,8,0.10);
+  --r-sm:6px;
+  --r-md:12px;
+  --r-lg:20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden;}
+img{max-width:100%;}
+a{color:inherit;text-decoration:none;}
+button{font-family:'Inter',sans-serif;cursor:pointer;}
+input,textarea{font-family:'Inter',sans-serif;}
+
+/* ─── SCROLLBAR ───────────────────────────────────────────── */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--fog);}
+::-webkit-scrollbar-thumb{background:var(--clay);border-radius:4px;}
+
+/* ─── NAV ─────────────────────────────────────────────────── */
+#topnav{
+  position:fixed;top:0;left:0;right:0;z-index:999;
+  background:rgba(248,244,237,0.92);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;height:64px;
+  transition:box-shadow 0.3s;
+}
+#topnav.scrolled{box-shadow:0 4px 24px var(--shadow);}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-icon{
+  width:38px;height:38px;background:var(--field);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;
+  box-shadow:0 2px 8px rgba(45,80,22,0.3);
+}
+.brand-name{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:800;color:var(--earth);}
+.brand-name span{color:var(--sprout);}
+.nav-menu{display:flex;align-items:center;gap:6px;list-style:none;}
+.nav-menu a{
+  font-size:0.85rem;font-weight:500;color:var(--muted);
+  padding:7px 14px;border-radius:var(--r-sm);
+  transition:color 0.2s,background 0.2s;
+}
+.nav-menu a:hover,.nav-menu a.active{color:var(--field);background:var(--sky);}
+.nav-btn{
+  background:var(--field);color:var(--white);
+  border:none;padding:9px 22px;border-radius:var(--r-sm);
+  font-size:0.85rem;font-weight:600;
+  transition:background 0.2s,transform 0.15s;
+}
+.nav-btn:hover{background:var(--sprout);transform:translateY(-1px);}
+.nav-hamburger{display:none;background:none;border:none;font-size:1.4rem;color:var(--earth);}
+
+/* ─── PAGE SECTIONS ──────────────────────────────────────── */
+.page-section{display:none;padding-top:64px;}
+.page-section.active{display:block;}
+
+/* ─── HERO ───────────────────────────────────────────────── */
+.hero{
+  min-height:calc(100vh - 64px);
+  display:grid;grid-template-columns:1fr 1fr;gap:0;
+  position:relative;overflow:hidden;
+}
+.hero-left{
+  padding:80px 60px 60px 60px;
+  display:flex;flex-direction:column;justify-content:center;
+  background:var(--cream);
+  position:relative;
+}
+.hero-right{
+  background:var(--field);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:60px 48px;
+  position:relative;overflow:hidden;
+}
+.hero-right::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 70% 30%, rgba(94,173,47,0.25) 0%, transparent 60%),
+             radial-gradient(ellipse at 20% 80%, rgba(232,150,13,0.15) 0%, transparent 50%);
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#EAF4D6;border:1px solid #B5D98A;
+  color:var(--leaf);font-size:0.75rem;font-weight:600;
+  padding:6px 14px;border-radius:20px;
+  letter-spacing:0.06em;text-transform:uppercase;
+  margin-bottom:24px;width:fit-content;
+}
+.hero-tag::before{content:'🌿';}
+h1.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:3.6rem;line-height:1.08;font-weight:800;
+  color:var(--earth);margin-bottom:22px;
+}
+h1.hero-title em{color:var(--leaf);font-style:italic;}
+.hero-desc{
+  font-size:1.05rem;color:var(--muted);line-height:1.75;
+  max-width:460px;margin-bottom:36px;
+}
+.hero-cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:48px;}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--field);color:var(--white);
+  border:none;padding:14px 28px;border-radius:var(--r-sm);
+  font-size:0.95rem;font-weight:600;
+  transition:background 0.2s,transform 0.15s,box-shadow 0.2s;
+  box-shadow:0 4px 16px rgba(45,80,22,0.25);
+}
+.btn-primary:hover{background:var(--sprout);transform:translateY(-2px);box-shadow:0 8px 24px rgba(45,80,22,0.30);}
+.btn-outline{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;color:var(--earth);
+  border:1.5px solid var(--clay);padding:14px 28px;border-radius:var(--r-sm);
+  font-size:0.95rem;font-weight:600;
+  transition:background 0.2s,border-color 0.2s;
+}
+.btn-outline:hover{background:var(--fog);border-color:var(--soil);}
+.hero-stats{display:flex;gap:36px;}
+.stat{display:flex;flex-direction:column;}
+.stat-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:800;color:var(--field);}
+.stat-label{font-size:0.78rem;color:var(--muted);font-weight:500;margin-top:2px;}
+
+/* Hero Chat Preview */
+.hero-chat{
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.18);
+  border-radius:var(--r-lg);overflow:hidden;
+  backdrop-filter:blur(8px);
+  position:relative;z-index:1;
+}
+.hc-header{
+  background:rgba(0,0,0,0.2);
+  padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.hc-title{color:rgba(255,255,255,0.9);font-size:0.85rem;font-weight:600;display:flex;align-items:center;gap:8px;}
+.pulse{width:8px;height:8px;background:#5EE05E;border-radius:50%;animation:pulse-anim 2s infinite;}
+@keyframes pulse-anim{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.6;transform:scale(0.85);}}
+.hc-msgs{padding:18px;display:flex;flex-direction:column;gap:14px;min-height:260px;}
+.hc-msg{max-width:88%;font-size:0.85rem;line-height:1.55;padding:11px 15px;border-radius:12px;}
+.hc-msg.u{
+  background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);
+  align-self:flex-end;border-radius:12px 12px 2px 12px;
+}
+.hc-msg.a{
+  background:rgba(168,216,122,0.15);border:1px solid rgba(168,216,122,0.25);
+  color:rgba(255,255,255,0.88);align-self:flex-start;border-radius:12px 12px 12px 2px;
+}
+.hc-msg.a strong{color:var(--mint);font-size:0.75rem;display:block;margin-bottom:4px;}
+.typing-indicator{display:flex;gap:4px;align-items:center;padding:10px 14px;}
+.typing-indicator span{width:6px;height:6px;background:var(--mint);border-radius:50%;animation:bounce 1.3s infinite ease-in-out;}
+.typing-indicator span:nth-child(2){animation-delay:.2s;}
+.typing-indicator span:nth-child(3){animation-delay:.4s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-7px);}}
+
+/* ─── SECTION WRAPPER ─────────────────────────────────────── */
+.wrap{max-width:1200px;margin:0 auto;padding:80px 48px;}
+.wrap-sm{max-width:900px;margin:0 auto;padding:80px 48px;}
+.sec-eyebrow{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sprout);margin-bottom:10px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:800;color:var(--earth);margin-bottom:14px;line-height:1.15;}
+.sec-sub{font-size:1rem;color:var(--muted);line-height:1.72;max-width:580px;}
+
+/* ─── FEATURES GRID ──────────────────────────────────────── */
+.features-bg{background:var(--white);}
+.features-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px;
+}
+.feat-card{
+  background:var(--cream);border:1.5px solid var(--border);
+  border-radius:var(--r-md);padding:28px 24px;
+  transition:box-shadow 0.2s,transform 0.2s,border-color 0.2s;
+  position:relative;overflow:hidden;
+}
+.feat-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  height:3px;background:linear-gradient(90deg,var(--leaf),var(--sprout));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 0.3s;
+}
+.feat-card:hover{box-shadow:0 8px 32px var(--shadow);transform:translateY(-3px);border-color:var(--mint);}
+.feat-card:hover::after{transform:scaleX(1);}
+.feat-icon{font-size:2rem;margin-bottom:14px;display:block;}
+.feat-card h3{font-size:1rem;font-weight:600;margin-bottom:8px;color:var(--earth);}
+.feat-card p{font-size:0.86rem;color:var(--muted);line-height:1.62;}
+
+/* ─── LIVE AI CHAT ────────────────────────────────────────── */
+#page-chat{background:var(--earth);}
+.chat-page-wrap{
+  display:grid;grid-template-columns:280px 1fr;gap:0;
+  min-height:calc(100vh - 64px);
+}
+.chat-sidebar{
+  background:rgba(255,255,255,0.04);
+  border-right:1px solid rgba(255,255,255,0.08);
+  padding:28px 20px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.sidebar-label{
+  font-size:0.7rem;font-weight:700;letter-spacing:0.1em;
+  text-transform:uppercase;color:rgba(255,255,255,0.4);
+  margin:16px 0 8px 8px;
+}
+.sidebar-label:first-child{margin-top:0;}
+.quick-topic{
+  background:transparent;border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.7);text-align:left;
+  padding:10px 14px;border-radius:var(--r-sm);
+  font-size:0.83rem;font-weight:500;
+  transition:background 0.2s,border-color 0.2s,color 0.2s;
+  display:flex;align-items:center;gap:8px;
+}
+.quick-topic:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2);color:var(--white);}
+.quick-topic.active{background:rgba(94,173,47,0.2);border-color:var(--sprout);color:var(--mint);}
+.chat-main{display:flex;flex-direction:column;height:calc(100vh - 64px);}
+.chat-topbar{
+  background:rgba(255,255,255,0.04);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  padding:16px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.chat-topbar-title{
+  font-size:0.95rem;font-weight:600;color:var(--white);
+  display:flex;align-items:center;gap:10px;
+}
+.online-badge{
+  background:rgba(94,224,94,0.15);border:1px solid rgba(94,224,94,0.4);
+  color:#5EE05E;font-size:0.7rem;font-weight:600;
+  padding:3px 10px;border-radius:20px;
+  display:flex;align-items:center;gap:5px;
+}
+.online-badge::before{content:'';width:6px;height:6px;background:#5EE05E;border-radius:50%;}
+#chatWindow{
+  flex:1;overflow-y:auto;padding:28px;
+  display:flex;flex-direction:column;gap:18px;
+}
+#chatWindow::-webkit-scrollbar{width:4px;}
+#chatWindow::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);}
+.msg-row{display:flex;gap:12px;align-items:flex-start;}
+.msg-row.user-row{flex-direction:row-reverse;}
+.msg-avatar{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;
+}
+.ai-avatar{background:var(--field);border:2px solid var(--sprout);}
+.user-avatar{background:var(--clay);border:2px solid var(--sun);}
+.msg-bubble{
+  max-width:70%;padding:14px 18px;border-radius:14px;
+  font-size:0.9rem;line-height:1.65;
+}
+.msg-bubble.ai-bubble{
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.88);
+  border-radius:4px 14px 14px 14px;
+}
+.msg-bubble.user-bubble{
+  background:var(--field);color:var(--white);
+  border-radius:14px 4px 14px 14px;
+  box-shadow:0 2px 12px rgba(45,80,22,0.3);
+}
+.msg-meta{font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;}
+.ai-badge{
+  font-size:0.72rem;font-weight:700;color:var(--mint);
+  letter-spacing:0.04em;text-transform:uppercase;
+  margin-bottom:6px;display:block;
+}
+.suggestion-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.s-chip{
+  background:rgba(94,173,47,0.12);border:1px solid rgba(94,173,47,0.3);
+  color:var(--mint);padding:6px 14px;border-radius:20px;
+  font-size:0.8rem;cursor:pointer;
+  transition:background 0.2s;
+}
+.s-chip:hover{background:rgba(94,173,47,0.25);}
+.chat-input-area{
+  padding:16px 28px;
+  border-top:1px solid rgba(255,255,255,0.08);
+  background:rgba(0,0,0,0.15);
+}
+.chat-input-row{
+  display:flex;gap:0;
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:var(--r-md);overflow:hidden;
+  transition:border-color 0.2s;
+}
+.chat-input-row:focus-within{border-color:var(--sprout);}
+#mainInput{
+  flex:1;background:transparent;border:none;outline:none;
+  color:var(--white);font-size:0.92rem;padding:16px 20px;
+}
+#mainInput::placeholder{color:rgba(255,255,255,0.3);}
+#mainSend{
+  background:var(--sprout);border:none;padding:0 22px;
+  color:var(--white);font-size:1rem;font-weight:600;
+  transition:background 0.2s;display:flex;align-items:center;gap:6px;
+  font-size:0.88rem;
+}
+#mainSend:hover{background:var(--leaf);}
+#mainSend:disabled{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.3);}
+.lang-hint{font-size:0.75rem;color:rgba(255,255,255,0.3);margin-top:8px;text-align:center;}
+
+/* ─── CROP LIBRARY ────────────────────────────────────────── */
+#page-crops{background:var(--cream);}
+.crop-filter-bar{
+  display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;
+}
+.cf-btn{
+  background:var(--white);border:1.5px solid var(--border);
+  color:var(--muted);padding:8px 18px;border-radius:20px;
+  font-size:0.83rem;font-weight:500;
+  transition:all 0.2s;
+}
+.cf-btn:hover,.cf-btn.active{
+  background:var(--field);border-color:var(--field);color:var(--white);
+}
+.crops-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+.crop-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--r-md);overflow:hidden;
+  transition:box-shadow 0.2s,transform 0.2s;
+  cursor:pointer;
+}
+.crop-card:hover{box-shadow:0 8px 28px var(--shadow);transform:translateY(-3px);}
+.crop-thumb{
+  height:120px;display:flex;align-items:center;justify-content:center;
+  font-size:4rem;background:var(--sky);
+}
+.crop-info{padding:16px;}
+.crop-info h4{font-size:0.95rem;font-weight:600;color:var(--earth);margin-bottom:4px;}
+.crop-info p{font-size:0.78rem;color:var(--muted);margin-bottom:10px;}
+.crop-tags{display:flex;gap:5px;flex-wrap:wrap;}
+.crop-tag{
+  background:var(--sky);color:var(--leaf);
+  font-size:0.68rem;font-weight:600;padding:3px 9px;border-radius:10px;
+  border:1px solid #B5D98A;
+}
+.crop-tag.rabi{background:#FFF4E0;color:#C07B0A;border-color:#F5C842;}
+.crop-tag.kharif{background:#EAF4D6;color:var(--leaf);}
+.crop-tag.perennial{background:#F0E8FF;color:#7B2FBE;border-color:#D4AAFF;}
+.ask-crop-btn{
+  background:var(--field);color:var(--white);
+  border:none;width:100%;padding:9px;
+  font-size:0.82rem;font-weight:600;
+  transition:background 0.2s;
+}
+.ask-crop-btn:hover{background:var(--sprout);}
+
+/* ─── DISEASE LIBRARY ─────────────────────────────────────── */
+#page-diseases{background:var(--white);}
+.disease-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px;}
+.disease-card{
+  background:var(--cream);border:1.5px solid var(--border);
+  border-radius:var(--r-md);padding:24px;
+  transition:box-shadow 0.2s,transform 0.2s;
+}
+.disease-card:hover{box-shadow:0 6px 24px var(--shadow);transform:translateY(-2px);}
+.disease-icon{font-size:2.2rem;margin-bottom:12px;}
+.disease-badge{
+  display:inline-block;font-size:0.68rem;font-weight:700;
+  padding:3px 10px;border-radius:10px;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em;
+}
+.badge-fungal{background:#FFE8E8;color:#C0392B;}
+.badge-bacterial{background:#FFF0D4;color:#B7770D;}
+.badge-viral{background:#E8F0FF;color:#2358C4;}
+.badge-pest{background:#F0FFE8;color:var(--leaf);}
+.badge-nutrient{background:#FFF4E8;color:#C07B0A;}
+.disease-card h4{font-size:1rem;font-weight:600;color:var(--earth);margin-bottom:8px;}
+.disease-card p{font-size:0.83rem;color:var(--muted);line-height:1.6;margin-bottom:14px;}
+.disease-crops{display:flex;gap:5px;flex-wrap:wrap;}
+.dcrop-tag{
+  background:var(--fog);color:var(--muted);
+  font-size:0.7rem;padding:2px 8px;border-radius:8px;
+}
+.ask-disease-btn{
+  margin-top:14px;background:transparent;
+  border:1.5px solid var(--border);color:var(--field);
+  width:100%;padding:8px;border-radius:var(--r-sm);
+  font-size:0.82rem;font-weight:600;
+  transition:all 0.2s;
+}
+.ask-disease-btn:hover{background:var(--field);color:var(--white);border-color:var(--field);}
+
+/* ─── GOVT SCHEMES ────────────────────────────────────────── */
+#page-schemes{background:var(--parchment);}
+.scheme-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px;}
+.scheme-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--r-md);padding:28px;
+  display:flex;flex-direction:column;gap:14px;
+  transition:box-shadow 0.2s,transform 0.2s;
+}
+.scheme-card:hover{box-shadow:0 8px 28px var(--shadow);transform:translateY(-2px);}
+.scheme-header{display:flex;align-items:flex-start;gap:16px;}
+.scheme-logo{
+  width:52px;height:52px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;flex-shrink:0;
+}
+.s-green{background:#EAF4D6;}
+.s-blue{background:#E8F0FF;}
+.s-orange{background:#FFF0D4;}
+.s-red{background:#FFE8E8;}
+.scheme-name{font-size:1.05rem;font-weight:700;color:var(--earth);margin-bottom:4px;}
+.scheme-ministry{font-size:0.78rem;color:var(--muted);}
+.scheme-desc{font-size:0.87rem;color:var(--text);line-height:1.65;}
+.scheme-benefits{display:flex;flex-direction:column;gap:6px;}
+.benefit-item{
+  display:flex;align-items:center;gap:8px;
+  font-size:0.83rem;color:var(--muted);
+}
+.benefit-item::before{content:'✓';color:var(--sprout);font-weight:700;font-size:0.9rem;}
+.scheme-cta{
+  display:flex;gap:10px;margin-top:4px;
+}
+.scheme-btn{
+  flex:1;padding:9px;border-radius:var(--r-sm);
+  font-size:0.82rem;font-weight:600;border:none;
+  transition:background 0.2s;
+}
+.scheme-btn-pri{background:var(--field);color:var(--white);}
+.scheme-btn-pri:hover{background:var(--sprout);}
+.scheme-btn-sec{background:var(--fog);color:var(--earth);}
+.scheme-btn-sec:hover{background:var(--border);}
+
+/* ─── MARKET PRICES ───────────────────────────────────────── */
+#page-market{background:var(--earth);}
+.market-wrap{max-width:1100px;margin:0 auto;padding:80px 48px;}
+.market-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;}
+.market-title{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:800;color:var(--white);}
+.market-subtitle{font-size:0.88rem;color:rgba(255,255,255,0.5);margin-top:6px;}
+.market-date{font-size:0.82rem;color:rgba(255,255,255,0.4);}
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px;}
+.price-card{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:var(--r-md);padding:20px;
+  transition:border-color 0.2s,background 0.2s;
+}
+.price-card:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);}
+.price-crop{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.price-emoji{font-size:1.8rem;}
+.price-name{font-size:0.95rem;font-weight:600;color:var(--white);}
+.price-variety{font-size:0.72rem;color:rgba(255,255,255,0.4);}
+.price-val{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:800;color:var(--amber);}
+.price-unit{font-size:0.78rem;color:rgba(255,255,255,0.4);margin-left:4px;}
+.price-change{
+  display:flex;align-items:center;gap:4px;
+  font-size:0.78rem;font-weight:600;margin-top:6px;
+}
+.price-change.up{color:#5EE05E;}
+.price-change.down{color:#FF6B6B;}
+.price-change.flat{color:rgba(255,255,255,0.4);}
+.msp-table{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:var(--r-md);overflow:hidden;
+}
+.msp-table-header{
+  background:rgba(255,255,255,0.06);
+  padding:14px 20px;
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
+  font-size:0.75rem;font-weight:700;letter-spacing:0.06em;
+  color:rgba(255,255,255,0.4);text-transform:uppercase;
+}
+.msp-row{
+  padding:14px 20px;
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
+  border-top:1px solid rgba(255,255,255,0.06);
+  font-size:0.88rem;color:rgba(255,255,255,0.8);
+  transition:background 0.2s;
+}
+.msp-row:hover{background:rgba(255,255,255,0.04);}
+.msp-row .crop-cell{display:flex;align-items:center;gap:10px;color:var(--white);font-weight:500;}
+.msp-row .price-cell{color:var(--amber);font-weight:600;}
+.msp-row .msp-cell{color:rgba(255,255,255,0.6);}
+.trend-up{color:#5EE05E;}
+.trend-down{color:#FF6B6B;}
+
+/* ─── WEATHER ─────────────────────────────────────────────── */
+#page-weather{background:linear-gradient(135deg,#1a3a2a 0%,#0D2318 60%,#0a1f15 100%);}
+.weather-wrap{max-width:1100px;margin:0 auto;padding:80px 48px;}
+.weather-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:28px;margin-top:40px;}
+.weather-main{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:var(--r-lg);padding:36px;
+}
+.weather-loc{font-size:0.82rem;color:rgba(255,255,255,0.5);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.weather-loc::before{content:'📍';}
+.weather-temp{font-family:'Playfair Display',serif;font-size:4.5rem;font-weight:800;color:var(--white);line-height:1;}
+.weather-desc{font-size:1.1rem;color:rgba(255,255,255,0.7);margin:8px 0 24px;}
+.weather-meta-row{display:flex;gap:24px;flex-wrap:wrap;}
+.w-meta{display:flex;flex-direction:column;gap:2px;}
+.w-meta-label{font-size:0.72rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;}
+.w-meta-val{font-size:1rem;font-weight:600;color:var(--white);}
+.weather-advice{
+  background:rgba(94,173,47,0.12);
+  border:1px solid rgba(94,173,47,0.25);
+  border-radius:var(--r-md);padding:20px;margin-top:24px;
+}
+.weather-advice h4{color:var(--mint);font-size:0.88rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.weather-advice h4::before{content:'🌾';}
+.weather-advice p{font-size:0.83rem;color:rgba(255,255,255,0.7);line-height:1.65;}
+.weather-sidebar{display:flex;flex-direction:column;gap:16px;}
+.forecast-card{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:var(--r-md);padding:18px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.forecast-day{font-size:0.85rem;font-weight:500;color:rgba(255,255,255,0.7);}
+.forecast-icon{font-size:1.6rem;}
+.forecast-temp{font-size:0.92rem;font-weight:600;color:var(--white);}
+.forecast-lo{color:rgba(255,255,255,0.4);}
+.agri-calendar{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:var(--r-md);overflow:hidden;margin-top:28px;
+}
+.cal-header{
+  background:rgba(255,255,255,0.06);
+  padding:16px 20px;
+  font-size:0.88rem;font-weight:600;color:var(--white);
+  display:flex;align-items:center;gap:8px;
+}
+.cal-item{
+  padding:14px 20px;
+  border-top:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;gap:14px;
+}
+.cal-month{
+  font-size:0.7rem;font-weight:700;text-transform:uppercase;
+  color:var(--sprout);background:rgba(94,173,47,0.1);
+  padding:3px 8px;border-radius:6px;min-width:42px;text-align:center;
+}
+.cal-activity{font-size:0.83rem;color:rgba(255,255,255,0.75);}
+
+/* ─── ABOUT ───────────────────────────────────────────────── */
+#page-about{background:var(--cream);}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-top:50px;}
+.about-img{
+  background:var(--field);border-radius:var(--r-lg);
+  height:400px;display:flex;align-items:center;justify-content:center;
+  font-size:8rem;position:relative;overflow:hidden;
+  box-shadow:0 20px 60px rgba(45,80,22,0.3);
+}
+.about-img::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 70%,rgba(232,150,13,0.2),transparent 60%);
+}
+.about-text .sec-title{margin-bottom:20px;}
+.about-text p{font-size:0.95rem;color:var(--muted);line-height:1.78;margin-bottom:16px;}
+.about-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px;}
+.a-stat{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-md);padding:20px;}
+.a-stat-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:800;color:var(--field);}
+.a-stat-label{font-size:0.78rem;color:var(--muted);margin-top:4px;}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px;}
+.team-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--r-md);padding:24px;text-align:center;
+}
+.team-avatar{
+  width:72px;height:72px;border-radius:50%;
+  background:var(--field);display:flex;align-items:center;justify-content:center;
+  font-size:2rem;margin:0 auto 14px;
+}
+.team-name{font-size:0.95rem;font-weight:600;color:var(--earth);margin-bottom:4px;}
+.team-role{font-size:0.78rem;color:var(--muted);}
+
+/* ─── CONTACT ─────────────────────────────────────────────── */
+#page-contact{background:var(--white);}
+.contact-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:60px;margin-top:40px;}
+.contact-info{display:flex;flex-direction:column;gap:24px;}
+.c-item{display:flex;gap:14px;align-items:flex-start;}
+.c-icon{
+  width:44px;height:44px;border-radius:10px;
+  background:var(--sky);display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;flex-shrink:0;
+}
+.c-label{font-size:0.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
+.c-val{font-size:0.95rem;font-weight:500;color:var(--earth);}
+.contact-form{background:var(--cream);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:36px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.form-group label{font-size:0.82rem;font-weight:600;color:var(--earth);}
+.form-group input,
+.form-group select,
+.form-group textarea{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--r-sm);padding:11px 14px;
+  font-size:0.9rem;color:var(--text);
+  transition:border-color 0.2s;outline:none;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{border-color:var(--sprout);}
+.form-group textarea{resize:vertical;min-height:100px;}
+.submit-btn{
+  background:var(--field);color:var(--white);
+  border:none;width:100%;padding:14px;border-radius:var(--r-sm);
+  font-size:0.95rem;font-weight:600;
+  transition:background 0.2s,transform 0.15s;
+}
+.submit-btn:hover{background:var(--sprout);transform:translateY(-1px);}
+.form-success{
+  display:none;text-align:center;padding:32px;
+  color:var(--field);
+}
+.form-success .success-icon{font-size:3rem;margin-bottom:12px;}
+.form-success h3{font-size:1.1rem;font-weight:600;}
+
+/* ─── HOW IT WORKS ────────────────────────────────────────── */
+.how-bg{background:var(--fog);}
+.steps-flow{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  margin-top:56px;position:relative;
+}
+.steps-flow::before{
+  content:'';position:absolute;
+  top:34px;left:calc(12.5% + 28px);right:calc(12.5% + 28px);
+  height:2px;
+  background:repeating-linear-gradient(90deg,var(--sprout) 0,var(--sprout) 8px,var(--border) 8px,var(--border) 18px);
+}
+.step-item{text-align:center;padding:0 20px;}
+.step-circle{
+  width:68px;height:68px;border-radius:50%;
+  background:var(--white);border:2.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;font-size:1.8rem;
+  position:relative;z-index:1;
+  transition:border-color 0.2s,box-shadow 0.2s;
+  box-shadow:0 4px 16px var(--shadow);
+}
+.step-item:hover .step-circle{border-color:var(--sprout);box-shadow:0 4px 20px rgba(94,173,47,0.2);}
+.step-item h4{font-size:0.95rem;font-weight:600;color:var(--earth);margin-bottom:8px;}
+.step-item p{font-size:0.82rem;color:var(--muted);line-height:1.6;}
+
+/* ─── TESTIMONIALS ────────────────────────────────────────── */
+.testi-bg{background:var(--white);}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;}
+.testi-card{
+  background:var(--cream);border:1.5px solid var(--border);
+  border-radius:var(--r-md);padding:28px;
+  position:relative;
+}
+.testi-quote{font-size:2.5rem;color:var(--mint);line-height:1;margin-bottom:12px;font-family:'Playfair Display',serif;}
+.testi-text{font-size:0.88rem;color:var(--muted);line-height:1.7;margin-bottom:20px;}
+.testi-author{display:flex;align-items:center;gap:12px;}
+.testi-avatar{width:44px;height:44px;border-radius:50%;background:var(--field);display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.testi-name{font-size:0.88rem;font-weight:600;color:var(--earth);}
+.testi-loc{font-size:0.75rem;color:var(--muted);}
+.stars{color:var(--sun);font-size:0.8rem;margin-bottom:6px;}
+
+/* ─── FAQ ─────────────────────────────────────────────────── */
+.faq-bg{background:var(--parchment);}
+.faq-list{margin-top:40px;display:flex;flex-direction:column;gap:12px;max-width:780px;}
+.faq-item{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--r-md);overflow:hidden;
+}
+.faq-q{
+  padding:18px 22px;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:0.95rem;font-weight:600;color:var(--earth);
+  transition:background 0.2s;
+}
+.faq-q:hover{background:var(--fog);}
+.faq-arrow{color:var(--muted);font-size:1.2rem;transition:transform 0.3s;}
+.faq-item.open .faq-arrow{transform:rotate(45deg);}
+.faq-a{
+  max-height:0;overflow:hidden;
+  font-size:0.88rem;color:var(--muted);line-height:1.7;
+  transition:max-height 0.35s ease,padding 0.35s ease;
+  padding:0 22px;
+}
+.faq-item.open .faq-a{max-height:300px;padding:0 22px 18px;}
+
+/* ─── FOOTER ──────────────────────────────────────────────── */
+footer{
+  background:var(--earth);color:rgba(255,255,255,0.6);
+  padding:60px 48px 32px;
+}
+.footer-grid{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:40px;max-width:1100px;margin:0 auto 40px;
+}
+.footer-brand .brand-name{font-size:1.5rem;margin-bottom:12px;display:block;}
+.footer-brand p{font-size:0.85rem;line-height:1.7;color:rgba(255,255,255,0.45);max-width:280px;}
+.footer-col h4{font-size:0.8rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:16px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.footer-col ul li a{font-size:0.85rem;color:rgba(255,255,255,0.5);transition:color 0.2s;}
+.footer-col ul li a:hover{color:var(--mint);}
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,0.08);
+  padding-top:28px;
+  max-width:1100px;margin:0 auto;
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:0.8rem;color:rgba(255,255,255,0.3);
+}
+.footer-badges{display:flex;gap:10px;}
+.f-badge{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  padding:5px 12px;border-radius:20px;
+  font-size:0.72rem;color:rgba(255,255,255,0.4);
+}
+
+/* ─── MOBILE NAV DRAWER ───────────────────────────────────── */
+#mobileMenu{
+  display:none;position:fixed;top:64px;left:0;right:0;
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:16px;z-index:998;
+  flex-direction:column;gap:6px;
+}
+#mobileMenu.open{display:flex;}
+#mobileMenu a{
+  padding:12px 16px;border-radius:var(--r-sm);
+  font-size:0.9rem;color:var(--muted);font-weight:500;
+  transition:background 0.2s;
+}
+#mobileMenu a:hover{background:var(--sky);color:var(--field);}
+
+/* ─── UTILITY ─────────────────────────────────────────────── */
+.mt-8{margin-top:8px;}
+.mt-16{margin-top:16px;}
+.mt-24{margin-top:24px;}
+.text-center{text-align:center;}
+.divider{border:none;border-top:1px solid var(--border);margin:0;}
+
+@media(max-width:1024px){
+  .hero{grid-template-columns:1fr;}
+  .hero-right{display:none;}
+  .features-grid{grid-template-columns:1fr 1fr;}
+  .crops-grid{grid-template-columns:repeat(3,1fr);}
+  .price-grid{grid-template-columns:1fr 1fr;}
+  .weather-grid{grid-template-columns:1fr;}
+  .about-grid{grid-template-columns:1fr;}
+  .about-img{height:200px;font-size:5rem;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .chat-page-wrap{grid-template-columns:1fr;}
+  .chat-sidebar{display:none;}
+  .scheme-grid{grid-template-columns:1fr;}
+}
+@media(max-width:768px){
+  #topnav{padding:0 20px;}
+  .nav-menu{display:none;}
+  .nav-hamburger{display:block;}
+  .wrap,.wrap-sm,.market-wrap,.weather-wrap{padding:48px 20px;}
+  .hero-left{padding:48px 20px;}
+  h1.hero-title{font-size:2.4rem;}
+  .sec-title{font-size:1.8rem;}
+  .features-grid,.crops-grid,.disease-grid,.team-grid,.testi-grid{grid-template-columns:1fr;}
+  .price-grid{grid-template-columns:1fr 1fr;}
+  .msp-table-header,.msp-row{grid-template-columns:2fr 1fr 1fr;}
+  .contact-grid,.form-row{grid-template-columns:1fr;}
+  .steps-flow{grid-template-columns:1fr 1fr;}
+  .steps-flow::before{display:none;}
+  .footer-grid{grid-template-columns:1fr;}
+  .footer-bottom{flex-direction:column;gap:14px;text-align:center;}
+  .about-stats{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ TOP NAV ═══════════════ -->
+<nav id="topnav">
+  <div class="brand">
+    <div class="brand-icon">🌾</div>
+    <span class="brand-name">Kisan<span>AI</span></span>
+  </div>
+  <ul class="nav-menu">
+    <li><a href="#" onclick="showPage('home')" class="active" id="nav-home">Home</a></li>
+    <li><a href="#" onclick="showPage('chat')" id="nav-chat">AI Advisory</a></li>
+    <li><a href="#" onclick="showPage('crops')" id="nav-crops">Crops</a></li>
+    <li><a href="#" onclick="showPage('diseases')" id="nav-diseases">Diseases</a></li>
+    <li><a href="#" onclick="showPage('market')" id="nav-market">Market Prices</a></li>
+    <li><a href="#" onclick="showPage('weather')" id="nav-weather">Weather</a></li>
+    <li><a href="#" onclick="showPage('schemes')" id="nav-schemes">Govt Schemes</a></li>
+    <li><a href="#" onclick="showPage('about')" id="nav-about">About</a></li>
+    <li><a href="#" onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+  </ul>
+  <button class="nav-btn" onclick="showPage('chat')">Ask AI →</button>
+  <button class="nav-hamburger" onclick="toggleMobile()">☰</button>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu">
+  <a href="#" onclick="showPage('home');toggleMobile()">🏠 Home</a>
+  <a href="#" onclick="showPage('chat');toggleMobile()">🤖 AI Advisory</a>
+  <a href="#" onclick="showPage('crops');toggleMobile()">🌾 Crops</a>
+  <a href="#" onclick="showPage('diseases');toggleMobile()">🍃 Diseases</a>
+  <a href="#" onclick="showPage('market');toggleMobile()">📈 Market Prices</a>
+  <a href="#" onclick="showPage('weather');toggleMobile()">🌦️ Weather</a>
+  <a href="#" onclick="showPage('schemes');toggleMobile()">🏛️ Govt Schemes</a>
+  <a href="#" onclick="showPage('about');toggleMobile()">ℹ️ About</a>
+  <a href="#" onclick="showPage('contact');toggleMobile()">📞 Contact</a>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: HOME
+═══════════════════════════════════════════════ -->
+<section id="page-home" class="page-section active">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-tag">AI-Powered Agricultural Intelligence</div>
+      <h1 class="hero-title">Smart farming advice<br/>for <em>every season,</em><br/>every crop.</h1>
+      <p class="hero-desc">KisanAI gives Indian farmers instant, expert guidance on crops, pests, soil, weather, and market prices — powered by advanced AI trained on agricultural science.</p>
+      <div class="hero-cta-row">
+        <button class="btn-primary" onclick="showPage('chat')">🌿 Ask AI Now</button>
+        <button class="btn-outline" onclick="showPage('crops')">Browse Crops →</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Crop varieties covered</span></div>
+        <div class="stat"><span class="stat-num">200+</span><span class="stat-label">Disease & pest guides</span></div>
+        <div class="stat"><span class="stat-num">24/7</span><span class="stat-label">AI availability</span></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-chat">
+        <div class="hc-header">
+          <div class="hc-title"><div class="pulse"></div> KisanAI Assistant</div>
+          <span style="font-size:0.72rem;color:rgba(255,255,255,0.4);">Live Demo</span>
+        </div>
+        <div class="hc-msgs">
+          <div class="hc-msg a"><strong>🌾 KisanAI</strong>Namaste! I'm your AI farming expert. Ask me about crops, pests, soil, fertilizers, or market prices.</div>
+          <div class="hc-msg u">My paddy leaves are turning brown at the tips. What is wrong?</div>
+          <div class="hc-msg a"><strong>🌾 KisanAI</strong>Brown leaf tips on paddy are often Bacterial Leaf Blight (BLB). Check if the yellowing starts from leaf tips and moves inward. Apply Copper Oxychloride 50% WP at 3g/litre. Avoid excess nitrogen fertilizer.</div>
+          <div class="hc-msg u">Which fertilizer for better yield in black cotton soil?</div>
+          <div class="hc-msg a">
+            <strong>🌾 KisanAI</strong>Black cotton soil (Vertisol) is rich in calcium but often deficient in Nitrogen & Phosphorus. Apply DAP (Di-ammonium Phosphate) 50 kg/acre at sowing + Urea 30 kg/acre in split doses. Add Zinc Sulphate 10 kg/acre once in 3 seasons.
+          </div>
+          <div class="hc-msg a" style="background:rgba(168,216,122,0.08);">
+            <div class="typing-indicator"><span></span><span></span><span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="features-bg">
+    <div class="wrap">
+      <div class="sec-eyebrow">Core features</div>
+      <h2 class="sec-title">Everything a farmer needs</h2>
+      <p class="sec-sub">From sowing to selling, KisanAI covers every stage of the farming journey with accurate, science-backed guidance.</p>
+      <div class="features-grid">
+        <div class="feat-card"><span class="feat-icon">🤖</span><h3>AI Crop Advisory</h3><p>Get instant, personalized advice on crop selection, sowing schedules, and agronomic practices based on your soil and region.</p></div>
+        <div class="feat-card"><span class="feat-icon">🔬</span><h3>Disease & Pest Diagnosis</h3><p>Describe symptoms and receive accurate diagnoses with chemical and organic treatment plans, dosages, and prevention methods.</p></div>
+        <div class="feat-card"><span class="feat-icon">🌦️</span><h3>Weather-Based Advisory</h3><p>Farming recommendations tailored to current and forecast weather — irrigation timing, spray schedules, and harvest windows.</p></div>
+        <div class="feat-card"><span class="feat-icon">🌱</span><h3>Soil & Fertilizer Guide</h3><p>Soil health analysis, nutrient management plans, and fertilizer recommendations for every soil type and crop stage.</p></div>
+        <div class="feat-card"><span class="feat-icon">📈</span><h3>Live Market Prices</h3><p>Real-time mandi prices, MSP updates, and selling strategies to maximize your income at the right time and market.</p></div>
+        <div class="feat-card"><span class="feat-icon">🏛️</span><h3>Government Schemes</h3><p>Complete information on PM-KISAN, Pradhan Mantri Fasal Bima, KCC, soil health cards, and all central & state subsidies.</p></div>
+        <div class="feat-card"><span class="feat-icon">💧</span><h3>Irrigation Planning</h3><p>Optimal irrigation schedules for drip, flood, and sprinkler systems based on your crop stage, soil, and weather data.</p></div>
+        <div class="feat-card"><span class="feat-icon">🌾</span><h3>Seed Selection</h3><p>High-yield variety recommendations — hybrid, HYV, and organic seeds suited to your district, season, and budget.</p></div>
+        <div class="feat-card"><span class="feat-icon">📦</span><h3>Post-Harvest Advice</h3><p>Grain storage, drying methods, grading, packaging, and value-addition guidance to reduce post-harvest losses.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how-bg">
+    <div class="wrap text-center">
+      <div class="sec-eyebrow">Simple process</div>
+      <h2 class="sec-title">How KisanAI works</h2>
+      <p class="sec-sub" style="margin:0 auto 0;">Four steps from question to field-ready answer.</p>
+      <div class="steps-flow">
+        <div class="step-item"><div class="step-circle">💬</div><h4>Ask your question</h4><p>Type in Hindi, English, or any local language — simple words work perfectly.</p></div>
+        <div class="step-item"><div class="step-circle">🧠</div><h4>AI analyzes</h4><p>Our model searches agricultural databases and science literature to understand your problem.</p></div>
+        <div class="step-item"><div class="step-circle">📋</div><h4>Get clear advice</h4><p>Practical, step-by-step recommendations with product names, dosages, and timings.</p></div>
+        <div class="step-item"><div class="step-circle">🚜</div><h4>Apply & grow</h4><p>Follow the guidance in your field. Ask follow-up questions anytime, 24/7.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="testi-bg">
+    <div class="wrap">
+      <div class="sec-eyebrow">Farmer stories</div>
+      <h2 class="sec-title">Trusted by farmers across India</h2>
+      <div class="testi-grid">
+        <div class="testi-card">
+          <div class="testi-quote">"</div>
+          <div class="stars">★★★★★</div>
+          <p class="testi-text">KisanAI diagnosed my wheat rust problem in seconds. Applied the suggested fungicide and saved 80% of my crop. This app is a blessing for small farmers like me.</p>
+          <div class="testi-author"><div class="testi-avatar">👨‍🌾</div><div><div class="testi-name">Ramesh Patel</div><div class="testi-loc">Madhya Pradesh · Wheat farmer</div></div></div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-quote">"</div>
+          <div class="stars">★★★★★</div>
+          <p class="testi-text">I asked about the best variety for my black soil and got detailed advice with yield data. Switched to MACS 6222 wheat variety and got 35% better yield this season.</p>
+          <div class="testi-author"><div class="testi-avatar">👩‍🌾</div><div><div class="testi-name">Savitri Devi</div><div class="testi-loc">Maharashtra · Soybean & wheat</div></div></div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-quote">"</div>
+          <div class="stars">★★★★★</div>
+          <p class="testi-text">The market price feature helped me decide to wait 2 weeks before selling my paddy. Got ₹200 more per quintal. That's ₹40,000 extra on 200 quintals!</p>
+          <div class="testi-author"><div class="testi-avatar">👨‍🌾</div><div><div class="testi-name">Suresh Kumar</div><div class="testi-loc">Punjab · Paddy farmer</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-bg">
+    <div class="wrap">
+      <div class="sec-eyebrow">Common questions</div>
+      <h2 class="sec-title">Frequently asked questions</h2>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Is KisanAI free to use?<span class="faq-arrow">+</span></div><div class="faq-a">Yes, KisanAI is completely free for all farmers. There are no hidden charges, subscriptions, or login requirements. Just open the website and start asking questions.</div></div>
+        <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Can I ask questions in Hindi or regional languages?<span class="faq-arrow">+</span></div><div class="faq-a">Yes! KisanAI understands Hindi, English, Tamil, Telugu, Marathi, Kannada, Bengali, Gujarati and more. Type naturally in any language and you'll get a clear, helpful response.</div></div>
+        <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">How accurate is the disease diagnosis?<span class="faq-arrow">+</span></div><div class="faq-a">KisanAI is trained on agricultural science literature and expert knowledge. For common diseases it is highly accurate. For serious outbreaks, we always recommend also consulting your local Krishi Vigyan Kendra (KVK) or district agriculture officer.</div></div>
+        <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Does it work without internet on a basic phone?<span class="faq-arrow">+</span></div><div class="faq-a">Currently KisanAI requires an internet connection. We recommend using it when you have Wi-Fi or mobile data. The site is lightweight and works well even on 2G/3G connections.</div></div>
+        <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Are the market prices updated daily?<span class="faq-arrow">+</span></div><div class="faq-a">The market price section shows indicative prices based on recent mandi data. For exact local prices, we always recommend checking your nearest APMC mandi or the eNAM portal for the most current rates.</div></div>
+        <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Can I get help applying for PM-KISAN or crop insurance?<span class="faq-arrow">+</span></div><div class="faq-a">Yes! The Government Schemes section explains all major schemes with eligibility, benefits, and how to apply. You can also ask the AI directly for step-by-step guidance on any scheme.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="brand-name" style="color:white;">Kisan<span>AI</span></span>
+        <p>AI-powered agricultural intelligence for every Indian farmer. Free, accurate, and available 24/7 in your language.</p>
+      </div>
+      <div class="footer-col"><h4>Features</h4><ul><li><a href="#" onclick="showPage('chat')">AI Advisory</a></li><li><a href="#" onclick="showPage('crops')">Crop Library</a></li><li><a href="#" onclick="showPage('diseases')">Disease Guide</a></li><li><a href="#" onclick="showPage('market')">Market Prices</a></li><li><a href="#" onclick="showPage('weather')">Weather</a></li></ul></div>
+      <div class="footer-col"><h4>Resources</h4><ul><li><a href="#" onclick="showPage('schemes')">Govt Schemes</a></li><li><a href="#">Fertilizer Calculator</a></li><li><a href="#">Crop Calendar</a></li><li><a href="#">Soil Testing</a></li><li><a href="#">KVK Directory</a></li></ul></div>
+      <div class="footer-col"><h4>Company</h4><ul><li><a href="#" onclick="showPage('about')">About Us</a></li><li><a href="#" onclick="showPage('contact')">Contact</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Use</a></li><li><a href="#">Careers</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 KisanAI. Built for Indian farmers with ❤️</span>
+      <div class="footer-badges"><span class="f-badge">🇮🇳 Made in India</span><span class="f-badge">🌾 Farmer First</span><span class="f-badge">🤖 AI Powered</span></div>
+    </div>
+  </footer>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: AI CHAT
+═══════════════════════════════════════════════ -->
+<section id="page-chat" class="page-section">
+  <div class="chat-page-wrap">
+    <div class="chat-sidebar">
+      <div class="sidebar-label">Quick Topics</div>
+      <button class="quick-topic" onclick="askTopic('How to treat yellowing leaves in rice?')">🍃 Yellowing leaves</button>
+      <button class="quick-topic" onclick="askTopic('Best fertilizer for wheat crop?')">🌾 Wheat fertilizer</button>
+      <button class="quick-topic" onclick="askTopic('How to control aphids organically?')">🐛 Aphid control</button>
+      <button class="quick-topic" onclick="askTopic('When is the best time to sow cotton?')">🌿 Cotton sowing</button>
+      <button class="quick-topic" onclick="askTopic('What is PM-KISAN scheme and how to apply?')">🏛️ PM-KISAN</button>
+      <button class="quick-topic" onclick="askTopic('How to improve soil health naturally?')">🌱 Soil health</button>
+      <button class="quick-topic" onclick="askTopic('Best drip irrigation setup for tomato?')">💧 Drip irrigation</button>
+      <button class="quick-topic" onclick="askTopic('How to store onions after harvest?')">📦 Onion storage</button>
+      <div class="sidebar-label">Crop-Specific</div>
+      <button class="quick-topic" onclick="askTopic('Complete guide for growing paddy rice')">🌾 Paddy / Rice</button>
+      <button class="quick-topic" onclick="askTopic('Sugarcane farming tips and varieties')">🎋 Sugarcane</button>
+      <button class="quick-topic" onclick="askTopic('Tomato pest and disease management')">🍅 Tomato</button>
+      <button class="quick-topic" onclick="askTopic('Soybean crop management guide')">🫘 Soybean</button>
+    </div>
+    <div class="chat-main">
+      <div class="chat-topbar">
+        <div class="chat-topbar-title">🌾 KisanAI Agricultural Advisor <span class="online-badge">Online</span></div>
+        <button onclick="clearChat()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);padding:6px 14px;border-radius:6px;font-size:0.78rem;cursor:pointer;">Clear chat</button>
+      </div>
+      <div id="chatWindow">
+        <div class="msg-row">
+          <div class="msg-avatar ai-avatar">🌾</div>
+          <div>
+            <div class="msg-bubble ai-bubble">
+              <span class="ai-badge">KisanAI</span>
+              Namaste! 🙏 I am your AI agricultural expert. I can help you with:<br/><br/>
+              • Crop diseases and pest identification<br/>
+              • Fertilizer and soil nutrition advice<br/>
+              • Irrigation and water management<br/>
+              • Seed variety selection<br/>
+              • Market prices and selling strategies<br/>
+              • Government schemes and subsidies<br/><br/>
+              Ask your question in Hindi, English, or any regional language. How can I help you today?
+              <div class="suggestion-chips">
+                <button class="s-chip" onclick="askTopic('My crop leaves are turning yellow')">🍃 Yellow leaves</button>
+                <button class="s-chip" onclick="askTopic('Best fertilizer for my crop')">🌱 Fertilizer guide</button>
+                <button class="s-chip" onclick="askTopic('How to get PM-KISAN benefit')">🏛️ PM-KISAN</button>
+                <button class="s-chip" onclick="askTopic('Current wheat MSP price')">📈 Market price</button>
+              </div>
+            </div>
+            <div class="msg-meta">Today, just now</div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <div class="chat-input-row">
+          <input type="text" id="mainInput" placeholder="Type your farming question here... (Hindi or English)" onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChat()"/>
+          <button id="mainSend" onclick="sendChat()">Send ➤</button>
+        </div>
+        <div class="lang-hint">Supported: English · हिंदी · मराठी · தமிழ் · తెలుగు · ಕನ್ನಡ · বাংলা · ગુજરાતી</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: CROPS
+═══════════════════════════════════════════════ -->
+<section id="page-crops" class="page-section">
+  <div class="wrap">
+    <div class="sec-eyebrow">Crop Knowledge Base</div>
+    <h2 class="sec-title">Crop Library</h2>
+    <p class="sec-sub">Browse 40+ crops with full guides on varieties, sowing, care, and harvesting. Click any crop to ask the AI about it.</p>
+    <div class="crop-filter-bar" style="margin-top:28px;">
+      <button class="cf-btn active" onclick="filterCrops('all',this)">All Crops</button>
+      <button class="cf-btn" onclick="filterCrops('kharif',this)">Kharif</button>
+      <button class="cf-btn" onclick="filterCrops('rabi',this)">Rabi</button>
+      <button class="cf-btn" onclick="filterCrops('perennial',this)">Perennial</button>
+      <button class="cf-btn" onclick="filterCrops('vegetable',this)">Vegetables</button>
+      <button class="cf-btn" onclick="filterCrops('fruit',this)">Fruits</button>
+    </div>
+    <div class="crops-grid" id="cropsGrid">
+      <!-- Crops injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: DISEASES
+═══════════════════════════════════════════════ -->
+<section id="page-diseases" class="page-section">
+  <div class="wrap">
+    <div class="sec-eyebrow">Plant Health Guide</div>
+    <h2 class="sec-title">Disease & Pest Library</h2>
+    <p class="sec-sub">Common crop diseases and pests with identification tips, treatment plans, and prevention methods.</p>
+    <div class="disease-grid">
+      <div class="disease-card"><div class="disease-icon">🍂</div><span class="disease-badge badge-fungal">Fungal</span><h4>Early Blight (Alternaria)</h4><p>Brown spots with yellow halos on older leaves. Moves upward. Favored by humid conditions and alternate wet-dry weather.</p><div class="disease-crops"><span class="dcrop-tag">Tomato</span><span class="dcrop-tag">Potato</span><span class="dcrop-tag">Brinjal</span></div><button class="ask-disease-btn" onclick="askAboutDisease('Early Blight Alternaria treatment and prevention')">Ask AI about this →</button></div>
+      <div class="disease-card"><div class="disease-icon">⬛</div><span class="disease-badge badge-fungal">Fungal</span><h4>Blast Disease (Pyricularia)</h4><p>Diamond-shaped grey-brown lesions on leaves with dark margins. Major threat during high humidity and cool nights.</p><div class="disease-crops"><span class="dcrop-tag">Paddy</span><span class="dcrop-tag">Wheat</span></div><button class="ask-disease-btn" onclick="askAboutDisease('Rice blast disease treatment')">Ask AI about this →</button></div>
+      <div class="disease-card"><div class="disease-icon">🟡</div><span class="disease-badge badge-bacterial">Bacterial</span><h4>Bacterial Leaf Blight (BLB)</h4><p>Yellowing from leaf tips and margins, water-soaked lesions. Spreads rapidly during flood irrigation and windy conditions.</p><div class="disease-crops"><span class="dcrop-tag">Paddy</span></div><button class="ask-disease-btn" onclick="askAboutDisease('Bacterial leaf blight in paddy treatment')">Ask AI about this →</button></div>
+      <div class="disease-card"><div class="disease-icon">🦠</div><span class="disease-badge badge-viral">Viral</span><h4>Yellow Mosaic Virus (YMV)</h4><p>Yellow-green mottling pattern on leaves, stunted growth, poor pod set. Transmitted by whiteflies — control the vector first.</p><div class="disease-crops"><span class="dcrop-tag">Soybean</span><span class="dcrop-tag">Moong</span><span class="dcrop-tag">Urd</span></div><button class="ask-disease-btn" onclick="askAboutDisease('Yellow mosaic virus control in soybean')">Ask AI about this →</button></div>
+      <div class="disease-card"><div class="disease-icon">🌫️</div><span class="disease-badge badge-fungal">Fungal</span><h4>Powdery Mildew</h4><p>White powdery coating on leaf surfaces. Reduces photosynthesis and causes leaf curl. Worst in dry weather with high humidity.</p><div class="disease-crops"><span class="dcrop-tag">Wheat</span><span class="dcrop-tag">Peas</span><span class="dcrop-tag">Grapes</span></div><button class="ask-disease-btn" onclick="askAboutDisease('Powdery mildew treatment and fungicide')">Ask AI about this →</button></div>
+      <div class="disease-card"><div class="disease-icon">🐛</div><span class="disease-badge badge-pest">Pest</span><h4>Fall Armyworm (FAW)</h4><p>Caterpillars feed on leaves and bore into cobs. Droppings visible inside whorl. Destructive pest of maize introduced in 2018.</p><div class="disease-crops"><span class="dcrop-tag">Maize</span><span class="dcrop-tag">Sorghum</span></div><button class="ask-disease-btn" onclick="askAboutDisease('Fall armyworm control in maize')">Ask AI about this →</button></div>
+      <div class="disease-card"><div class="disease-icon">🟫</div><span class="disease-badge badge-fungal">Fungal</span><h4>Wilt (Fusarium / Verticillium)</h4><p>Sudden wilting despite adequate water. Brown discoloration inside stems. Soil-borne; manage through resistant varieties and crop rotation.</p><div class="disease-crops"><span class="dcrop-tag">Tomato</span><span class="dcrop-tag">Cotton</span><span class="dcrop-tag">Chickpea</span></div><button class="ask-disease-btn" onclick="askAboutDisease('Fusarium wilt treatment and prevention')">Ask AI about this →</button></div>
+      <div class="disease-card"><div class="disease-icon">🔴</div><span class="disease-badge badge-pest">Pest</span><h4>Red Spider Mite</h4><p>Tiny mites on leaf undersides causing silvery stippling, bronzing, and leaf drop. Worst during hot, dry weather.</p><div class="disease-crops"><span class="dcrop-tag">Cotton</span><span class="dcrop-tag">Brinjal</span><span class="dcrop-tag">Beans</span></div><button class="ask-disease-btn" onclick="askAboutDisease('Red spider mite control organic chemical')">Ask AI about this →</button></div>
+      <div class="disease-card"><div class="disease-icon">💛</div><span class="disease-badge badge-nutrient">Nutrient</span><h4>Nitrogen Deficiency</h4><p>Yellowing starting from older lower leaves, pale green color throughout canopy. Plant growth is stunted and spindly.</p><div class="disease-crops"><span class="dcrop-tag">All crops</span></div><button class="ask-disease-btn" onclick="askAboutDisease('Nitrogen deficiency correction in crops')">Ask AI about this →</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: MARKET PRICES
+═══════════════════════════════════════════════ -->
+<section id="page-market" class="page-section">
+  <div class="market-wrap">
+    <div class="market-header">
+      <div>
+        <div class="market-title">Live Market Prices</div>
+        <div class="market-subtitle">Indicative mandi & MSP rates — updated daily</div>
+      </div>
+      <div class="market-date">📅 Kharif 2025 Season</div>
+    </div>
+
+    <div class="price-grid">
+      <div class="price-card"><div class="price-crop"><span class="price-emoji">🌾</span><div><div class="price-name">Wheat</div><div class="price-variety">Lok-1 / HD-2967</div></div></div><div><span class="price-val">₹2,275</span><span class="price-unit">/qtl MSP</span></div><div class="price-change up">▲ ₹150 vs last year</div></div>
+      <div class="price-card"><div class="price-crop"><span class="price-emoji">🌾</span><div><div class="price-name">Paddy (Rice)</div><div class="price-variety">Common grade</div></div></div><div><span class="price-val">₹2,183</span><span class="price-unit">/qtl MSP</span></div><div class="price-change up">▲ ₹117 vs last year</div></div>
+      <div class="price-card"><div class="price-crop"><span class="price-emoji">🌽</span><div><div class="price-name">Maize</div><div class="price-variety">Yellow hybrid</div></div></div><div><span class="price-val">₹2,090</span><span class="price-unit">/qtl MSP</span></div><div class="price-change up">▲ ₹135 vs last year</div></div>
+      <div class="price-card"><div class="price-crop"><span class="price-emoji">🫘</span><div><div class="price-name">Soybean</div><div class="price-variety">Yellow variety</div></div></div><div><span class="price-val">₹4,892</span><span class="price-unit">/qtl MSP</span></div><div class="price-change flat">— Same as last year</div></div>
+      <div class="price-card"><div class="price-crop"><span class="price-emoji">🧅</span><div><div class="price-name">Onion</div><div class="price-variety">Nasik red</div></div></div><div><span class="price-val">₹1,840</span><span class="price-unit">/qtl avg</span></div><div class="price-change down">▼ ₹320 vs last month</div></div>
+      <div class="price-card"><div class="price-crop"><span class="price-emoji">🧄</span><div><div class="price-name">Garlic</div><div class="price-variety">Desi variety</div></div></div><div><span class="price-val">₹9,200</span><span class="price-unit">/qtl avg</span></div><div class="price-change up">▲ ₹1,400 vs last month</div></div>
+      <div class="price-card"><div class="price-crop"><span class="price-emoji">🍅</span><div><div class="price-name">Tomato</div><div class="price-variety">Hybrid grade A</div></div></div><div><span class="price-val">₹2,100</span><span class="price-unit">/qtl avg</span></div><div class="price-change up">▲ ₹600 vs last month</div></div>
+      <div class="price-card"><div class="price-crop"><span class="price-emoji">🌻</span><div><div class="price-name">Sunflower</div><div class="price-variety">Hybrid oil variety</div></div></div><div><span class="price-val">₹7,280</span><span class="price-unit">/qtl MSP</span></div><div class="price-change up">▲ ₹325 vs last year</div></div>
+    </div>
+
+    <div class="msp-table">
+      <div class="msp-table-header"><span>Crop</span><span>MSP 2025-26</span><span>MSP 2024-25</span><span>Change</span></div>
+      <div class="msp-row"><span class="crop-cell">🌾 Wheat</span><span class="price-cell">₹2,275/qtl</span><span class="msp-cell">₹2,125/qtl</span><span class="trend-up">+7.1%</span></div>
+      <div class="msp-row"><span class="crop-cell">🌾 Paddy (Common)</span><span class="price-cell">₹2,183/qtl</span><span class="msp-cell">₹2,069/qtl</span><span class="trend-up">+5.5%</span></div>
+      <div class="msp-row"><span class="crop-cell">🌾 Jowar (Hybrid)</span><span class="price-cell">₹3,371/qtl</span><span class="msp-cell">₹3,180/qtl</span><span class="trend-up">+6.0%</span></div>
+      <div class="msp-row"><span class="crop-cell">🌽 Maize</span><span class="price-cell">₹2,090/qtl</span><span class="msp-cell">₹1,962/qtl</span><span class="trend-up">+6.5%</span></div>
+      <div class="msp-row"><span class="crop-cell">🫘 Tur (Arhar)</span><span class="price-cell">₹7,550/qtl</span><span class="msp-cell">₹7,000/qtl</span><span class="trend-up">+7.9%</span></div>
+      <div class="msp-row"><span class="crop-cell">🫘 Moong</span><span class="price-cell">₹8,682/qtl</span><span class="msp-cell">₹8,558/qtl</span><span class="trend-up">+1.4%</span></div>
+      <div class="msp-row"><span class="crop-cell">🫘 Soybean (Yellow)</span><span class="price-cell">₹4,892/qtl</span><span class="msp-cell">₹4,892/qtl</span><span>—</span></div>
+      <div class="msp-row"><span class="crop-cell">🌻 Sunflower</span><span class="price-cell">₹7,280/qtl</span><span class="msp-cell">₹6,760/qtl</span><span class="trend-up">+7.7%</span></div>
+      <div class="msp-row"><span class="crop-cell">🌿 Cotton (Medium)</span><span class="price-cell">₹7,121/qtl</span><span class="msp-cell">₹7,020/qtl</span><span class="trend-up">+1.4%</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: WEATHER
+═══════════════════════════════════════════════ -->
+<section id="page-weather" class="page-section">
+  <div class="weather-wrap">
+    <div class="sec-eyebrow" style="color:var(--mint);">Agricultural Weather</div>
+    <h2 class="sec-title" style="color:var(--white);">Weather & Crop Advisory</h2>
+    <div class="weather-grid">
+      <div>
+        <div class="weather-main">
+          <div class="weather-loc">Puducherry, Tamil Nadu</div>
+          <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:8px;">
+            <div style="font-size:4rem;">🌤️</div>
+            <div><div class="weather-temp">34°C</div><div class="weather-desc">Partly Cloudy · Humid</div></div>
+          </div>
+          <div class="weather-meta-row">
+            <div class="w-meta"><div class="w-meta-label">Humidity</div><div class="w-meta-val">78%</div></div>
+            <div class="w-meta"><div class="w-meta-label">Wind</div><div class="w-meta-val">14 km/h</div></div>
+            <div class="w-meta"><div class="w-meta-label">Rain chance</div><div class="w-meta-val">35%</div></div>
+            <div class="w-meta"><div class="w-meta-label">UV Index</div><div class="w-meta-val">High (8)</div></div>
+          </div>
+          <div class="weather-advice">
+            <h4>Today's Farming Advisory</h4>
+            <p>Avoid pesticide spraying today — high humidity may reduce effectiveness and rain is possible in the afternoon. Good conditions for transplanting paddy seedlings in the morning hours (6–10 AM). Irrigate vegetable beds in the evening to reduce evaporation losses.</p>
+          </div>
+        </div>
+        <div class="agri-calendar" style="margin-top:24px;">
+          <div class="cal-header">🗓️ Crop Calendar — South India (Kharif 2025)</div>
+          <div class="cal-item"><span class="cal-month">Jun</span><span class="cal-activity">Sow kharif crops — paddy, cotton, groundnut sowing begins</span></div>
+          <div class="cal-item"><span class="cal-month">Jul</span><span class="cal-activity">Top dressing of N fertilizer; weed management in paddy</span></div>
+          <div class="cal-item"><span class="cal-month">Aug</span><span class="cal-activity">Monitor for blast & BLB in paddy; spray as needed</span></div>
+          <div class="cal-item"><span class="cal-month">Sep</span><span class="cal-activity">Cotton boll formation; protect from bollworm attack</span></div>
+          <div class="cal-item"><span class="cal-month">Oct</span><span class="cal-activity">Paddy harvest begins; prepare rabi land</span></div>
+          <div class="cal-item"><span class="cal-month">Nov</span><span class="cal-activity">Rabi sowing — wheat, chickpea, mustard, potato</span></div>
+        </div>
+      </div>
+      <div class="weather-sidebar">
+        <div style="font-size:0.8rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px;">5-Day Forecast</div>
+        <div class="forecast-card"><div><div class="forecast-day">Today</div></div><div class="forecast-icon">🌤️</div><div><div class="forecast-temp">34° <span class="forecast-lo">/ 27°</span></div></div></div>
+        <div class="forecast-card"><div><div class="forecast-day">Tomorrow</div></div><div class="forecast-icon">🌦️</div><div><div class="forecast-temp">31° <span class="forecast-lo">/ 26°</span></div></div></div>
+        <div class="forecast-card"><div><div class="forecast-day">Wednesday</div></div><div class="forecast-icon">🌧️</div><div><div class="forecast-temp">29° <span class="forecast-lo">/ 25°</span></div></div></div>
+        <div class="forecast-card"><div><div class="forecast-day">Thursday</div></div><div class="forecast-icon">⛅</div><div><div class="forecast-temp">32° <span class="forecast-lo">/ 26°</span></div></div></div>
+        <div class="forecast-card"><div><div class="forecast-day">Friday</div></div><div class="forecast-icon">☀️</div><div><div class="forecast-temp">35° <span class="forecast-lo">/ 27°</span></div></div></div>
+        <div style="margin-top:16px;background:rgba(255,100,100,0.1);border:1px solid rgba(255,100,100,0.2);border-radius:var(--r-md);padding:16px;">
+          <div style="font-size:0.82rem;font-weight:600;color:#FF8A8A;margin-bottom:6px;">⚠️ Alert</div>
+          <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);line-height:1.6;">Heavy rain warning for Wednesday. Complete paddy transplanting by Tuesday. Avoid applying fertilizer on Wednesday–Thursday.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: GOVT SCHEMES
+═══════════════════════════════════════════════ -->
+<section id="page-schemes" class="page-section">
+  <div class="wrap">
+    <div class="sec-eyebrow">Government of India</div>
+    <h2 class="sec-title">Agricultural Schemes & Subsidies</h2>
+    <p class="sec-sub">Complete information on major central and state government schemes for farmers. Click any scheme to ask the AI how to apply.</p>
+    <div class="scheme-grid">
+      <div class="scheme-card">
+        <div class="scheme-header"><div class="scheme-logo s-green">🌾</div><div><div class="scheme-name">PM-KISAN</div><div class="scheme-ministry">Ministry of Agriculture & Farmers Welfare</div></div></div>
+        <p class="scheme-desc">Pradhan Mantri Kisan Samman Nidhi — direct income support of ₹6,000 per year to eligible farmer families in three equal installments of ₹2,000 each.</p>
+        <div class="scheme-benefits"><div class="benefit-item">₹6,000/year in 3 installments of ₹2,000</div><div class="benefit-item">All landholding farmer families eligible</div><div class="benefit-item">Direct bank transfer — no middlemen</div><div class="benefit-item">Register at pmkisan.gov.in or CSC</div></div>
+        <div class="scheme-cta"><button class="scheme-btn scheme-btn-pri" onclick="askAboutScheme('PM-KISAN scheme eligibility and how to apply')">Ask AI how to apply</button><button class="scheme-btn scheme-btn-sec" onclick="window.open('https://pmkisan.gov.in','_blank')">Official Site ↗</button></div>
+      </div>
+      <div class="scheme-card">
+        <div class="scheme-header"><div class="scheme-logo s-blue">🛡️</div><div><div class="scheme-name">PMFBY — Crop Insurance</div><div class="scheme-ministry">Pradhan Mantri Fasal Bima Yojana</div></div></div>
+        <p class="scheme-desc">Comprehensive crop insurance covering pre-sowing, standing crop, post-harvest, and localized risks. Very low premium rates for farmers — government pays the bulk.</p>
+        <div class="scheme-benefits"><div class="benefit-item">Kharif: 2% premium; Rabi: 1.5% premium</div><div class="benefit-item">Horticulture crops: max 5% premium</div><div class="benefit-item">Coverage for drought, flood, pest, disease</div><div class="benefit-item">Apply through bank or CSC before cutoff</div></div>
+        <div class="scheme-cta"><button class="scheme-btn scheme-btn-pri" onclick="askAboutScheme('PMFBY crop insurance how to enroll and claim')">Ask AI how to enroll</button><button class="scheme-btn scheme-btn-sec" onclick="window.open('https://pmfby.gov.in','_blank')">Official Site ↗</button></div>
+      </div>
+      <div class="scheme-card">
+        <div class="scheme-header"><div class="scheme-logo s-orange">💳</div><div><div class="scheme-name">Kisan Credit Card (KCC)</div><div class="scheme-ministry">NABARD / All nationalized banks</div></div></div>
+        <p class="scheme-desc">Flexible credit facility for farmers to meet crop cultivation expenses, post-harvest expenses, and allied agricultural activities at subsidized interest rates.</p>
+        <div class="scheme-benefits"><div class="benefit-item">Credit up to ₹3 lakh at 7% interest</div><div class="benefit-item">Effective rate 4% with govt interest subvention</div><div class="benefit-item">Applicable for fisheries and animal husbandry too</div><div class="benefit-item">Apply at nearest bank branch with land documents</div></div>
+        <div class="scheme-cta"><button class="scheme-btn scheme-btn-pri" onclick="askAboutScheme('Kisan Credit Card KCC application documents required')">Ask AI about KCC</button><button class="scheme-btn scheme-btn-sec">Apply at Bank</button></div>
+      </div>
+      <div class="scheme-card">
+        <div class="scheme-header"><div class="scheme-logo s-green">🧪</div><div><div class="scheme-name">Soil Health Card</div><div class="scheme-ministry">Department of Agriculture, Cooperation & Farmers Welfare</div></div></div>
+        <p class="scheme-desc">Free soil testing and health card issued every 2 years showing soil nutrient status and fertilizer recommendations for 12 parameters.</p>
+        <div class="scheme-benefits"><div class="benefit-item">Free soil testing at government labs</div><div class="benefit-item">12 nutrient parameters tested</div><div class="benefit-item">Tailored fertilizer recommendation</div><div class="benefit-item">Apply at Krishi Vigyan Kendra or tehsil office</div></div>
+        <div class="scheme-cta"><button class="scheme-btn scheme-btn-pri" onclick="askAboutScheme('Soil health card how to apply and get soil tested')">Ask AI about this</button><button class="scheme-btn scheme-btn-sec" onclick="window.open('https://soilhealth.dac.gov.in','_blank')">Official Site ↗</button></div>
+      </div>
+      <div class="scheme-card">
+        <div class="scheme-header"><div class="scheme-logo s-blue">💧</div><div><div class="scheme-name">PM Krishi Sinchayee Yojana</div><div class="scheme-ministry">Ministry of Jal Shakti</div></div></div>
+        <p class="scheme-desc">"Har Khet Ko Pani, More Crop Per Drop" — scheme to expand irrigated area and improve water use efficiency through micro-irrigation subsidies.</p>
+        <div class="scheme-benefits"><div class="benefit-item">55% subsidy on drip irrigation for small farmers</div><div class="benefit-item">45% subsidy for large farmers on micro-irrigation</div><div class="benefit-item">Additional 10% state top-up in many states</div><div class="benefit-item">Apply via state agriculture department</div></div>
+        <div class="scheme-cta"><button class="scheme-btn scheme-btn-pri" onclick="askAboutScheme('PMKSY drip irrigation subsidy how to apply')">Ask AI how to apply</button><button class="scheme-btn scheme-btn-sec">State Portal</button></div>
+      </div>
+      <div class="scheme-card">
+        <div class="scheme-header"><div class="scheme-logo s-orange">🏪</div><div><div class="scheme-name">eNAM — Digital Market</div><div class="scheme-ministry">Small Farmers Agribusiness Consortium</div></div></div>
+        <p class="scheme-desc">National Agriculture Market — online trading platform connecting farmers directly with buyers across India, enabling better price discovery and eliminating middlemen.</p>
+        <div class="scheme-benefits"><div class="benefit-item">Sell produce online to buyers across India</div><div class="benefit-item">Real-time price discovery and bidding</div><div class="benefit-item">Linked to 1,260+ APMC mandis</div><div class="benefit-item">Register with Aadhaar + bank account</div></div>
+        <div class="scheme-cta"><button class="scheme-btn scheme-btn-pri" onclick="askAboutScheme('eNAM portal registration and how to sell online')">Ask AI about eNAM</button><button class="scheme-btn scheme-btn-sec" onclick="window.open('https://enam.gov.in','_blank')">Official Site ↗</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: ABOUT
+═══════════════════════════════════════════════ -->
+<section id="page-about" class="page-section">
+  <div class="wrap">
+    <div class="sec-eyebrow">Our mission</div>
+    <h2 class="sec-title">About KisanAI</h2>
+    <div class="about-grid">
+      <div class="about-img">🌾</div>
+      <div class="about-text">
+        <p>KisanAI was built with one mission: to give every Indian farmer — regardless of education level, smartphone access, or economic status — the same quality of agricultural advice that large farm owners get from expensive consultants.</p>
+        <p>India has 140 million farm households. Most farming decisions are still made on guesswork, traditional knowledge, or advice from fertilizer shop owners with commercial interests. Bad advice means crop loss, debt, and despair.</p>
+        <p>We built an AI system trained on decades of ICAR research, agricultural university publications, and expert agronomist knowledge — and put it in a simple chat interface anyone can use on any phone.</p>
+        <p>Our system supports 8+ languages, covers 50+ crops, 200+ diseases and pests, and is available 24 hours a day — even at 3am when a farmer notices something wrong with his crop.</p>
+        <div class="about-stats">
+          <div class="a-stat"><div class="a-stat-num">50+</div><div class="a-stat-label">Crops in our database</div></div>
+          <div class="a-stat"><div class="a-stat-num">200+</div><div class="a-stat-label">Disease & pest guides</div></div>
+          <div class="a-stat"><div class="a-stat-num">8+</div><div class="a-stat-label">Languages supported</div></div>
+          <div class="a-stat"><div class="a-stat-num">24/7</div><div class="a-stat-label">AI availability</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:60px;">
+      <div class="sec-eyebrow">The team</div>
+      <h3 class="sec-title" style="font-size:1.8rem;">Built by people who care about farmers</h3>
+      <div class="team-grid">
+        <div class="team-card"><div class="team-avatar">👨‍💻</div><div class="team-name">Arjun Sharma</div><div class="team-role">Founder & CEO · IIT Bombay Agri-Tech</div></div>
+        <div class="team-card"><div class="team-avatar">👩‍🔬</div><div class="team-name">Dr. Priya Menon</div><div class="team-role">Chief Agronomist · PhD Plant Sciences, TNAU</div></div>
+        <div class="team-card"><div class="team-avatar">👨‍💻</div><div class="team-name">Rahul Desai</div><div class="team-role">AI/ML Lead · Ex-Google, IISc</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: CONTACT
+═══════════════════════════════════════════════ -->
+<section id="page-contact" class="page-section">
+  <div class="wrap">
+    <div class="sec-eyebrow">Get in touch</div>
+    <h2 class="sec-title">Contact Us</h2>
+    <p class="sec-sub">Have feedback, a partnership inquiry, or need help? We'd love to hear from you.</p>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="c-item"><div class="c-icon">📧</div><div><div class="c-label">Email</div><div class="c-val">hello@kisanai.in</div></div></div>
+        <div class="c-item"><div class="c-icon">📞</div><div><div class="c-label">Helpline</div><div class="c-val">1800-XXX-XXXX (Toll free)</div></div></div>
+        <div class="c-item"><div class="c-icon">📍</div><div><div class="c-label">Office</div><div class="c-val">T-Hub, Hyderabad, Telangana</div></div></div>
+        <div class="c-item"><div class="c-icon">🕐</div><div><div class="c-label">Support hours</div><div class="c-val">Mon–Sat: 9AM – 6PM IST</div></div></div>
+        <div style="background:var(--sky);border:1px solid #B5D98A;border-radius:var(--r-md);padding:20px;margin-top:8px;">
+          <div style="font-size:0.85rem;font-weight:600;color:var(--leaf);margin-bottom:6px;">🤖 Fastest support</div>
+          <div style="font-size:0.83rem;color:var(--muted);line-height:1.6;">For farming questions, our AI gives instant answers 24/7 — much faster than waiting for human support. <a href="#" onclick="showPage('chat')" style="color:var(--leaf);font-weight:600;">Try the AI now →</a></div>
+        </div>
+      </div>
+      <div class="contact-form">
+        <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:24px;color:var(--earth);">Send us a message</h3>
+        <div id="contactFormInner">
+          <div class="form-row">
+            <div class="form-group"><label>First Name</label><input type="text" placeholder="Ramesh"/></div>
+            <div class="form-group"><label>Last Name</label><input type="text" placeholder="Kumar"/></div>
+          </div>
+          <div class="form-group"><label>Email Address</label><input type="email" placeholder="you@example.com"/></div>
+          <div class="form-group"><label>Phone Number</label><input type="tel" placeholder="+91 9876543210"/></div>
+          <div class="form-group"><label>Topic</label>
+            <select><option>General Inquiry</option><option>Technical Issue</option><option>Partnership / NGO</option><option>Press & Media</option><option>Government / Policy</option><option>Feedback</option></select>
+          </div>
+          <div class="form-group"><label>Message</label><textarea placeholder="Tell us how we can help..."></textarea></div>
+          <button class="submit-btn" onclick="submitForm()">Send Message →</button>
+        </div>
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon">✅</div>
+          <h3>Message sent!</h3>
+          <p style="margin-top:8px;color:var(--muted);font-size:0.88rem;">We'll get back to you within 24 hours. For instant farming help, <a href="#" onclick="showPage('chat');hideSuccess()" style="color:var(--leaf);font-weight:600;">ask our AI →</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SCRIPTS ═══════════════ -->
+<script>
+/* ─── NAVIGATION ──────────────────────────────────── */
+const pages = ['home','chat','crops','diseases','market','weather','schemes','about','contact'];
+
+function showPage(name){
+  pages.forEach(p=>{
+    document.getElementById('page-'+p).classList.toggle('active', p===name);
+    const nav = document.getElementById('nav-'+p);
+    if(nav) nav.classList.toggle('active', p===name);
+  });
+  window.scrollTo(0,0);
+  if(name==='crops') renderCrops();
+}
+
+function toggleMobile(){
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+window.addEventListener('scroll',()=>{
+  document.getElementById('topnav').classList.toggle('scrolled', window.scrollY>10);
+});
+
+/* ─── FAQ ─────────────────────────────────────────── */
+function toggleFaq(el){el.classList.toggle('open');}
+
+/* ─── CROP DATA ───────────────────────────────────── */
+const crops = [
+  {name:'Wheat',emoji:'🌾',season:'rabi',desc:'India\'s most important rabi cereal crop',tags:['Rabi','Oct–Nov sowing']},
+  {name:'Paddy (Rice)',emoji:'🌾',season:'kharif',desc:'Staple food crop, needs flooded fields',tags:['Kharif','Jun–Jul sowing']},
+  {name:'Maize',emoji:'🌽',season:'kharif',desc:'Versatile cereal for food, feed & starch',tags:['Kharif','Jun–Jul sowing']},
+  {name:'Soybean',emoji:'🫘',season:'kharif',desc:'High-protein oilseed, grows in black soil',tags:['Kharif','Jun–Jul sowing']},
+  {name:'Cotton',emoji:'🌿',season:'kharif',desc:'Cash crop, major fiber and oilseed',tags:['Kharif','May–Jun sowing']},
+  {name:'Sugarcane',emoji:'🎋',season:'perennial',desc:'Major cash crop for sugar and jaggery',tags:['Perennial','Feb–Mar sowing']},
+  {name:'Mustard',emoji:'🌼',season:'rabi',desc:'Major oilseed crop of North India',tags:['Rabi','Oct–Nov sowing']},
+  {name:'Chickpea',emoji:'🫘',season:'rabi',desc:'Most important pulse in India (Bengal gram)',tags:['Rabi','Oct–Nov sowing']},
+  {name:'Tomato',emoji:'🍅',season:'vegetable',desc:'High-value vegetable, grown year round',tags:['Vegetable','All seasons']},
+  {name:'Onion',emoji:'🧅',season:'vegetable',desc:'Essential kitchen crop & major export',tags:['Vegetable','Oct–Nov sowing']},
+  {name:'Potato',emoji:'🥔',season:'vegetable',desc:'Leading vegetable crop by volume in India',tags:['Vegetable','Oct–Nov sowing']},
+  {name:'Groundnut',emoji:'🥜',season:'kharif',desc:'Premier oilseed & protein crop',tags:['Kharif','Jun–Jul sowing']},
+  {name:'Mango',emoji:'🥭',season:'fruit',desc:'King of fruits — largest fruit crop in India',tags:['Fruit','Perennial']},
+  {name:'Banana',emoji:'🍌',season:'fruit',desc:'Leading fruit crop by production',tags:['Fruit','Year-round']},
+  {name:'Turmeric',emoji:'🟡',season:'kharif',desc:'Spice crop with high export demand',tags:['Kharif','May–Jun sowing']},
+  {name:'Chilli',emoji:'🌶️',season:'vegetable',desc:'Major spice and vegetable crop',tags:['Vegetable','Jul–Aug sowing']},
+];
+
+function filterCrops(season, btn){
+  document.querySelectorAll('.cf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCrops(season);
+}
+
+function renderCrops(filter='all'){
+  const grid = document.getElementById('cropsGrid');
+  const filtered = filter==='all' ? crops : crops.filter(c=>c.season===filter);
+  grid.innerHTML = filtered.map(c=>`
+    <div class="crop-card">
+      <div class="crop-thumb">${c.emoji}</div>
+      <div class="crop-info">
+        <h4>${c.name}</h4>
+        <p>${c.desc}</p>
+        <div class="crop-tags">${c.tags.map(t=>`<span class="crop-tag ${c.season}">${t}</span>`).join('')}</div>
+      </div>
+      <button class="ask-crop-btn" onclick="askAboutCrop('${c.name}')">Ask AI about ${c.name} →</button>
+    </div>
+  `).join('');
+}
+
+function askAboutCrop(name){
+  showPage('chat');
+  setTimeout(()=>{
+    document.getElementById('mainInput').value = `Tell me everything about growing ${name} — varieties, fertilizers, common diseases, and best practices.`;
+    sendChat();
+  }, 300);
+}
+function askAboutDisease(q){
+  showPage('chat');
+  setTimeout(()=>{ document.getElementById('mainInput').value=q; sendChat(); },300);
+}
+function askAboutScheme(q){
+  showPage('chat');
+  setTimeout(()=>{ document.getElementById('mainInput').value=q; sendChat(); },300);
+}
+function askTopic(q){
+  document.getElementById('mainInput').value=q;
+  sendChat();
+}
+
+/* ─── CONTACT FORM ────────────────────────────────── */
+function submitForm(){
+  document.getElementById('contactFormInner').style.display='none';
+  document.getElementById('formSuccess').style.display='block';
+}
+function hideSuccess(){
+  document.getElementById('contactFormInner').style.display='block';
+  document.getElementById('formSuccess').style.display='none';
+}
+
+/* ─── AI CHAT ─────────────────────────────────────── */
+const SYSTEM = `You are KisanAI, a highly knowledgeable and friendly AI agricultural advisor for Indian farmers. You have deep expertise in:
+- Indian crop varieties, sowing seasons, and agronomic practices
+- Plant diseases (fungal, bacterial, viral) and pest identification with accurate diagnosis
+- Fertilizer recommendations (NPK, micronutrients) by crop and soil type
+- Irrigation methods — drip, flood, sprinkler — scheduling and water requirements
+- Organic farming, biofertilizers, and integrated pest management (IPM)
+- Government schemes: PM-KISAN, PMFBY, KCC, Soil Health Card, PMKSY, eNAM
+- Market prices, MSP, mandi rates, and selling strategies
+- Post-harvest storage, value addition, and agro-processing
+- Weather-based farm advisory
+
+COMMUNICATION STYLE:
+- Warm, respectful, and practical — like a knowledgeable friend, not a textbook
+- Give specific product names, dosages, timing, and quantities when relevant
+- Use emojis sparingly to make answers clear and friendly
+- When uncertain, say so and suggest consulting a local agricultural officer or KVK
+- Support Hindi/regional language questions naturally
+- Keep answers focused and actionable — avoid unnecessary theory`;
+
+let history = [];
+
+function getTime(){
+  return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+}
+
+function appendMsg(role, html, time){
+  const win = document.getElementById('chatWindow');
+  const isUser = role==='user';
+  const row = document.createElement('div');
+  row.className = 'msg-row' + (isUser?' user-row':'');
+  row.innerHTML = `
+    <div class="msg-avatar ${isUser?'user-avatar':'ai-avatar'}">${isUser?'👤':'🌾'}</div>
+    <div>
+      <div class="msg-bubble ${isUser?'user-bubble':'ai-bubble'}">
+        ${isUser?'':' <span class="ai-badge">KisanAI</span>'}${html}
+      </div>
+      <div class="msg-meta">${time}</div>
+    </div>`;
+  win.appendChild(row);
+  win.scrollTop = win.scrollHeight;
+  return row;
+}
+
+function appendThinking(){
+  const win = document.getElementById('chatWindow');
+  const row = document.createElement('div');
+  row.className='msg-row';
+  row.id='thinking-row';
+  row.innerHTML=`
+    <div class="msg-avatar ai-avatar">🌾</div>
+    <div><div class="msg-bubble ai-bubble" style="padding:14px 18px;">
+      <span class="ai-badge">KisanAI</span>
+      <div class="typing-indicator"><span></span><span></span><span></span></div>
+    </div></div>`;
+  win.appendChild(row);
+  win.scrollTop=win.scrollHeight;
+}
+
+function removeThinking(){
+  const el=document.getElementById('thinking-row');
+  if(el)el.remove();
+}
+
+function escHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br/>');}
+
+async function sendChat(){
+  const input=document.getElementById('mainInput');
+  const btn=document.getElementById('mainSend');
+  const text=input.value.trim();
+  if(!text||btn.disabled) return;
+
+  input.value='';
+  btn.disabled=true;
+
+  const time=getTime();
+  appendMsg('user', escHtml(text), time);
+  appendThinking();
+
+  try{
+    const messages = history.map(m=>({role:m.role,content:m.content}));
+    messages.push({role:'user',content:text});
+
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        system:SYSTEM,
+        messages
+      })
+    });
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+
+    const reply=data.content[0].text;
+    removeThinking();
+    appendMsg('assistant',escHtml(reply),getTime());
+    history.push({role:'user',content:text});
+    history.push({role:'assistant',content:reply});
+  }catch(e){
+    removeThinking();
+    appendMsg('assistant','Sorry, I had trouble connecting right now. Please check your internet connection and try again. 🙏',getTime());
+  }
+
+  btn.disabled=false;
+  input.focus();
+}
+
+function clearChat(){
+  history=[];
+  const win=document.getElementById('chatWindow');
+  win.innerHTML='';
+  appendMsg('assistant','Chat cleared. How can I help you with your farm today? 🌾',getTime());
+}
+
+// Init crops on load
+renderCrops();
+</script>
+</body>
+</html>
